@@ -304,7 +304,7 @@ function displayContact() {
   "social": {
     "github": "https://github.com/umeshsujakhu",
     "linkedin": "https://www.linkedin.com/in/umesh-sujakhu",
-    "twitter": ""
+    "medium": "https://medium.com/@sujakhu.umesh"
   },
   "availability": "Open to new opportunities"
 }</pre>
