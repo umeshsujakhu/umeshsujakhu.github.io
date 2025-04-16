@@ -71,11 +71,21 @@ navItems.forEach(item => {
 
 // Terminal functionality
 let terminalActive = false;
+let commandHistory = [];
+let historyIndex = -1;
+let currentInput = '';
 
 // Toggle terminal visibility
 function toggleTerminal() {
     terminalActive = !terminalActive;
     terminalContainer.classList.toggle('active', terminalActive);
+    
+    if (terminalActive) {
+        // Focus on the input when terminal is shown
+        setTimeout(() => {
+            document.getElementById('terminal-input').focus();
+        }, 100);
+    }
 }
 
 // Show terminal on page load after a delay
@@ -83,23 +93,62 @@ setTimeout(() => {
     toggleTerminal();
 }, 2000);
 
+// Available commands
+const availableCommands = {
+    'help': 'Display available commands',
+    'about': 'View about information',
+    'experience': 'View work experience',
+    'skills': 'List skills',
+    'projects': 'View projects',
+    'contact': 'Display contact information',
+    'clear': 'Clear terminal',
+    'goto': 'Navigate to section (usage: goto about|experience|skills|projects|contact)'
+};
+
 // Execute terminal commands
 function executeCommand(command) {
-    switch(command) {
-        case 'cat about.txt':
-            aboutResponse.style.display = 'block';
-            break;
-        case 'ls -la skills/':
-            displaySkills();
-            break;
-        case 'cat projects.json':
-            displayProjects();
-            break;
-        case 'contact --info':
-            displayContact();
-            break;
-        default:
-            return;
+    // Trim the command
+    command = command.trim();
+    
+    // Skip if empty
+    if (!command) return;
+    
+    // Add to history if not empty
+    if (commandHistory.length === 0 || commandHistory[commandHistory.length - 1] !== command) {
+        commandHistory.push(command);
+    }
+    historyIndex = commandHistory.length;
+    
+    // Process command
+    if (command === 'help') {
+        displayHelp();
+    } else if (command === 'about' || command === 'cat about.txt') {
+        aboutResponse.style.display = 'block';
+        scrollToSection('about');
+    } else if (command === 'experience' || command === 'cat experience.log') {
+        document.getElementById('experience-response').style.display = 'block';
+        scrollToSection('experience');
+    } else if (command === 'skills' || command === 'ls -la skills/') {
+        displaySkills();
+        scrollToSection('skills');
+    } else if (command === 'projects' || command === 'cat projects.json') {
+        displayProjects();
+        scrollToSection('projects');
+    } else if (command === 'contact' || command === 'contact --info') {
+        displayContact();
+        scrollToSection('contact');
+    } else if (command === 'clear') {
+        clearTerminal();
+    } else if (command.startsWith('goto ')) {
+        const section = command.split(' ')[1];
+        if (['about', 'experience', 'skills', 'projects', 'contact'].includes(section)) {
+            scrollToSection(section);
+            addTerminalResponse(`Navigating to ${section} section...`);
+        } else {
+            addTerminalResponse(`Unknown section: ${section}. Available sections: about, experience, skills, projects, contact`);
+        }
+    } else {
+        addTerminalResponse(`Command not found: ${command}. Type 'help' for available commands.`);
     }
     
     // Scroll terminal to bottom
@@ -107,34 +156,101 @@ function executeCommand(command) {
     terminalBody.scrollTop = terminalBody.scrollHeight;
 }
 
+// Display help in terminal
+function displayHelp() {
+    let helpText = '<div class="help-content">';
+    helpText += '<p>Available commands:</p>';
+    helpText += '<ul>';
+    
+    for (const [cmd, desc] of Object.entries(availableCommands)) {
+        helpText += `<li><span class="command-name">${cmd}</span> - ${desc}</li>`;
+    }
+    
+    helpText += '</ul>';
+    helpText += '</div>';
+    
+    addTerminalResponse(helpText);
+}
+
+// Clear terminal
+function clearTerminal() {
+    // Remove all response elements
+    const responses = document.querySelectorAll('.terminal-content .response');
+    responses.forEach(response => {
+        response.style.display = 'none';
+    });
+    
+    // Remove all command lines except the input line
+    const lines = document.querySelectorAll('.terminal-content .line:not(.input-line)');
+    lines.forEach(line => {
+        if (!line.classList.contains('input-line')) {
+            line.remove();
+        }
+    });
+}
+
+// Add response to terminal
+function addTerminalResponse(content) {
+    const responseDiv = document.createElement('div');
+    responseDiv.className = 'line response';
+    responseDiv.innerHTML = content;
+    
+    // Insert before the input line
+    const inputLine = document.querySelector('.input-line');
+    document.querySelector('.terminal-content').insertBefore(responseDiv, inputLine);
+}
+
+// Add new command line to terminal
+function addCommandLine(command) {
+    const lineDiv = document.createElement('div');
+    lineDiv.className = 'line';
+    lineDiv.innerHTML = `<span class="prompt">umesh@portfolio:~$</span><span class="command">${command}</span>`;
+    
+    // Insert before the input line
+    const inputLine = document.querySelector('.input-line');
+    document.querySelector('.terminal-content').insertBefore(lineDiv, inputLine);
+}
+
+// Scroll to section
+function scrollToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+        window.scrollTo({
+            top: section.offsetTop - 80,
+            behavior: 'smooth'
+        });
+    }
+}
+
 // Display skills in terminal
 function displaySkills() {
+    skillsResponse.style.display = 'block';
     skillsResponse.innerHTML = `
         <div class="terminal-table">
             <div class="table-row">
                 <span class="file-permissions">drwxr-xr-x</span>
-                <span class="file-owner">developer developer</span>
+                <span class="file-owner">umesh sujakhu</span>
                 <span class="file-size">4096</span>
                 <span class="file-date">Apr 16 08:42</span>
                 <span class="file-name">frontend/</span>
             </div>
             <div class="table-row">
                 <span class="file-permissions">drwxr-xr-x</span>
-                <span class="file-owner">developer developer</span>
+                <span class="file-owner">umesh sujakhu</span>
                 <span class="file-size">4096</span>
                 <span class="file-date">Apr 16 08:42</span>
                 <span class="file-name">backend/</span>
             </div>
             <div class="table-row">
                 <span class="file-permissions">drwxr-xr-x</span>
-                <span class="file-owner">developer developer</span>
+                <span class="file-owner">umesh sujakhu</span>
                 <span class="file-size">4096</span>
                 <span class="file-date">Apr 16 08:42</span>
                 <span class="file-name">database/</span>
             </div>
             <div class="table-row">
                 <span class="file-permissions">drwxr-xr-x</span>
-                <span class="file-owner">developer developer</span>
+                <span class="file-owner">umesh sujakhu</span>
                 <span class="file-size">4096</span>
                 <span class="file-date">Apr 16 08:42</span>
                 <span class="file-name">devops/</span>
@@ -145,31 +261,32 @@ function displaySkills() {
 
 // Display projects in terminal
 function displayProjects() {
+    projectsResponse.style.display = 'block';
     projectsResponse.innerHTML = `
         <pre>{
   "projects": [
     {
-      "name": "E-Commerce Platform",
-      "description": "Full-stack e-commerce solution",
-      "technologies": ["React", "Node.js", "MongoDB"],
+      "name": "High-Performance API Gateway",
+      "description": "Kong API Gateway implementation",
+      "technologies": ["Kong", "Node.js", "Microservices"],
       "status": "completed"
     },
     {
-      "name": "Task Management App",
-      "description": "Collaborative task management",
-      "technologies": ["Angular", "Express", "PostgreSQL"],
+      "name": "Real-time Search Platform",
+      "description": "Elasticsearch integration",
+      "technologies": ["Elasticsearch", "Node.js", "Vue.js"],
       "status": "completed"
     },
     {
-      "name": "Weather Forecast App",
-      "description": "Real-time weather forecasts",
-      "technologies": ["JavaScript", "API", "CSS3"],
+      "name": "Event-Driven Architecture",
+      "description": "RabbitMQ implementation",
+      "technologies": ["RabbitMQ", "Node.js", "Microservices"],
       "status": "completed"
     },
     {
-      "name": "Social Media Dashboard",
-      "description": "Social media management",
-      "technologies": ["Vue.js", "Python", "Firebase"],
+      "name": "Chrome Extension",
+      "description": "Vue 3-based browser extension",
+      "technologies": ["Vue.js", "JavaScript", "Chrome API"],
       "status": "completed"
     }
   ]
@@ -179,14 +296,15 @@ function displayProjects() {
 
 // Display contact in terminal
 function displayContact() {
+    contactResponse.style.display = 'block';
     contactResponse.innerHTML = `
         <pre>{
-  "email": "contact@example.com",
-  "location": "San Francisco, CA",
+  "email": "sujakhu.umesh@gmail.com",
+  "location": "Bhaktapur, Nepal",
   "social": {
-    "github": "github.com/developer",
-    "linkedin": "linkedin.com/in/developer",
-    "twitter": "twitter.com/developer"
+    "github": "https://github.com/umeshsujakhu",
+    "linkedin": "https://www.linkedin.com/in/umesh-sujakhu",
+    "twitter": ""
   },
   "availability": "Open to new opportunities"
 }</pre>
@@ -203,26 +321,97 @@ navItems.forEach(item => {
                 toggleTerminal();
             }
             
-            // Clear previous command and set new one
-            typingText.textContent = '';
-            blinkingCursor.style.display = 'none';
+            // Add command to terminal
+            addCommandLine(command);
             
-            // Simulate typing
-            let i = 0;
-            const typing = setInterval(() => {
-                typingText.textContent += command.charAt(i);
-                i++;
-                if (i >= command.length) {
-                    clearInterval(typing);
-                    setTimeout(() => {
-                        executeCommand(command);
-                        blinkingCursor.style.display = 'inline';
-                    }, 500);
-                }
-            }, 100);
+            // Execute command
+            executeCommand(command);
         }
     });
 });
+
+// Initialize typeable terminal
+function initTypeableTerminal() {
+    // Create input line
+    const inputLine = document.createElement('div');
+    inputLine.className = 'line input-line';
+    inputLine.innerHTML = `
+        <span class="prompt">umesh@portfolio:~$</span>
+        <input type="text" id="terminal-input" class="terminal-input" autocomplete="off" spellcheck="false">
+    `;
+    
+    // Replace the blinking cursor line with the input line
+    const blinkingCursorLine = document.querySelector('.terminal-content .line:last-child');
+    blinkingCursorLine.replaceWith(inputLine);
+    
+    // Focus on input
+    const terminalInput = document.getElementById('terminal-input');
+    
+    // Handle input events
+    terminalInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const command = terminalInput.value;
+            
+            // Add command to terminal
+            addCommandLine(command);
+            
+            // Execute command
+            executeCommand(command);
+            
+            // Clear input
+            terminalInput.value = '';
+        } else if (e.key === 'ArrowUp') {
+            // Navigate command history (up)
+            e.preventDefault();
+            if (historyIndex > 0) {
+                historyIndex--;
+                terminalInput.value = commandHistory[historyIndex];
+                // Move cursor to end of input
+                setTimeout(() => {
+                    terminalInput.selectionStart = terminalInput.selectionEnd = terminalInput.value.length;
+                }, 0);
+            }
+        } else if (e.key === 'ArrowDown') {
+            // Navigate command history (down)
+            e.preventDefault();
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                terminalInput.value = commandHistory[historyIndex];
+            } else if (historyIndex === commandHistory.length - 1) {
+                historyIndex = commandHistory.length;
+                terminalInput.value = currentInput;
+            }
+        } else if (e.key === 'Tab') {
+            // Command auto-completion
+            e.preventDefault();
+            const input = terminalInput.value.toLowerCase();
+            
+            if (input) {
+                const matches = Object.keys(availableCommands).filter(cmd => cmd.startsWith(input));
+                if (matches.length === 1) {
+                    terminalInput.value = matches[0];
+                } else if (matches.length > 1) {
+                    // Show available completions
+                    addCommandLine(input);
+                    addTerminalResponse(`<div class="completion-suggestions">${matches.join(', ')}</div>`);
+                }
+            }
+        } else {
+            // Store current input for history navigation
+            currentInput = terminalInput.value;
+        }
+    });
+    
+    // Focus terminal input when clicking on terminal
+    terminalContainer.addEventListener('click', () => {
+        terminalInput.focus();
+    });
+    
+    // Initial help message
+    setTimeout(() => {
+        addTerminalResponse('Welcome to Umesh\'s portfolio terminal. Type <span class="command-highlight">help</span> for available commands.');
+    }, 4000);
+}
 
 // Intersection Observer for animations
 const observerOptions = {
@@ -285,24 +474,122 @@ function animateStatCounters() {
     });
 }
 
-// Matrix rain effect
+// Matrix rain effect - Modified to be dimmer and easier on the eyes
 function createMatrixRain() {
     const matrixRain = document.createElement('div');
     matrixRain.className = 'matrix-rain';
     document.body.appendChild(matrixRain);
     
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$><=!?';
-    const columns = Math.floor(window.innerWidth / 20);
+    // Reduced character set for better readability
+    const characters = '01';
+    
+    // Significantly increased spacing between columns for reduced density
+    const columns = Math.floor(window.innerWidth / 50);
+    
+    // Create much fewer drops overall
+    const dropDensity = 0.5; // Only create 50% of possible columns
     
     for (let i = 0; i < columns; i++) {
+        // Skip some columns randomly to reduce density
+        if (Math.random() > dropDensity) continue;
+        
         const drop = document.createElement('div');
         drop.className = 'matrix-drop';
-        drop.style.left = i * 20 + 'px';
-        drop.style.animationDuration = Math.random() * 3 + 2 + 's';
-        drop.style.animationDelay = Math.random() * 5 + 's';
+        drop.style.left = i * 50 + 'px'; // Much wider spacing between columns
+        
+        // Very slow animation duration (10-20 seconds)
+        drop.style.animationDuration = Math.random() * 10 + 10 + 's';
+        
+        // Very long delays between drops (5-20 seconds)
+        drop.style.animationDelay = Math.random() * 15 + 5 + 's';
+        
+        // Very low opacity for minimal visual strain
+        drop.style.opacity = '0.15';
+        
         drop.textContent = characters.charAt(Math.floor(Math.random() * characters.length));
         matrixRain.appendChild(drop);
     }
+    
+    // Add CSS for matrix rain effect
+    const style = document.createElement('style');
+    style.textContent += `
+        .matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .matrix-drop {
+            position: absolute;
+            top: -20px;
+            color: rgba(0, 160, 0, 0.25); /* Very soft green with high transparency */
+            font-family: var(--font-code), 'Courier New', monospace;
+            font-size: 12px; /* Even smaller font size */
+            text-shadow: 0 0 1px rgba(0, 160, 0, 0.1); /* Minimal glow */
+            animation-name: matrix-fall;
+            animation-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1); /* Smooth easing */
+            animation-iteration-count: infinite;
+            filter: blur(0.5px); /* Slight blur to reduce harshness */
+        }
+        
+        @keyframes matrix-fall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            25% { /* Very slow fade in */
+                opacity: 0.15;
+            }
+            75% { /* Extended visible time */
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+        }
+        
+        /* Terminal input styling */
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: var(--accent-primary);
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+            caret-color: var(--accent-primary);
+            outline: none;
+            width: calc(100% - 180px);
+            padding: 0;
+            margin: 0;
+        }
+        
+        .command-highlight {
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+        
+        .help-content ul {
+            list-style-type: none;
+            margin-left: 1rem;
+        }
+        
+        .help-content .command-name {
+            color: var(--accent-primary);
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        .completion-suggestions {
+            color: var(--accent-secondary);
+            margin-bottom: 0.5rem;
+        }
+    `;
+    document.head.appendChild(style);
 }
 
 // Create matrix rain with a delay
@@ -331,6 +618,9 @@ setTimeout(() => {
     typeWriter(typingText, 'whoami', 100, () => {
         setTimeout(() => {
             document.getElementById('name-response').style.display = 'block';
+            
+            // Initialize typeable terminal after initial animation
+            setTimeout(initTypeableTerminal, 1000);
         }, 500);
     });
 }, 3000);
@@ -511,223 +801,9 @@ if (contactForm) {
             
             // Add success message to terminal
             if (terminalActive) {
-                const newLine = document.createElement('div');
-                newLine.className = 'line';
-                newLine.innerHTML = `<span class="prompt">developer@portfolio:~$</span><span class="command">echo "Message sent successfully!"</span>`;
-                
-                const newResponse = document.createElement('div');
-                newResponse.className = 'line response';
-                newResponse.textContent = 'Message sent successfully!';
-                
-                const terminalContent = document.querySelector('.terminal-content');
-                terminalContent.insertBefore(newLine, document.getElementById('blinking-cursor').parentNode);
-                terminalContent.insertBefore(newResponse, document.getElementById('blinking-cursor').parentNode);
-                
-                // Scroll terminal to bottom
-                const terminalBody = document.querySelector('.terminal-body');
-                terminalBody.scrollTop = terminalBody.scrollHeight;
+                addCommandLine('echo "Message sent successfully!"');
+                addTerminalResponse('Message sent successfully!');
             }
         }, 2000);
     });
 }
-
-// Add active state to nav links based on scroll position
-function setActiveNavLink() {
-    const scrollPosition = window.scrollY;
-    
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop - 100;
-        const sectionHeight = section.offsetHeight;
-        const sectionId = section.getAttribute('id');
-        
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${sectionId}`) {
-                    link.classList.add('active');
-                }
-            });
-        }
-    });
-}
-
-// Add active class style
-const activeStyle = document.createElement('style');
-activeStyle.textContent = `
-    .nav-link.active {
-        color: var(--accent-primary);
-    }
-    
-    .nav-link.active::before {
-        width: 100%;
-    }
-`;
-document.head.appendChild(activeStyle);
-
-// Update active nav link on scroll
-window.addEventListener('scroll', setActiveNavLink);
-
-// Initialize active nav link on page load
-setActiveNavLink();
-
-// Add parallax effect to background
-window.addEventListener('scroll', () => {
-    const scrollPosition = window.scrollY;
-    const backgroundSvg = document.querySelector('.background-svg');
-    
-    if (backgroundSvg) {
-        backgroundSvg.style.transform = `translateY(${scrollPosition * 0.1}px)`;
-    }
-});
-
-// Add terminal toggle button
-const terminalToggleBtn = document.createElement('button');
-terminalToggleBtn.className = 'terminal-toggle-btn';
-terminalToggleBtn.innerHTML = '<i class="fas fa-terminal"></i>';
-document.body.appendChild(terminalToggleBtn);
-
-// Add terminal toggle button style
-const terminalBtnStyle = document.createElement('style');
-terminalBtnStyle.textContent = `
-    .terminal-toggle-btn {
-        position: fixed;
-        bottom: 30px;
-        left: 30px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background-color: var(--accent-primary);
-        color: var(--bg-primary);
-        border: none;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        z-index: 99;
-        transition: background-color 0.3s, box-shadow 0.3s;
-    }
-    
-    .terminal-toggle-btn:hover {
-        background-color: var(--accent-secondary);
-        box-shadow: 0 0 15px var(--accent-secondary);
-    }
-`;
-document.head.appendChild(terminalBtnStyle);
-
-// Terminal toggle button functionality
-terminalToggleBtn.addEventListener('click', toggleTerminal);
-
-// Add typing animation to section titles
-function animateSectionTitles() {
-    const sectionTitles = document.querySelectorAll('.section-title');
-    
-    const titleObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('typing');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-    
-    sectionTitles.forEach(title => {
-        titleObserver.observe(title);
-    });
-}
-
-// Initialize section title animations
-animateSectionTitles();
-
-// Add hover effect to project cards
-const projectCards = document.querySelectorAll('.project-card');
-projectCards.forEach(card => {
-    card.addEventListener('mouseenter', () => {
-        card.style.transform = 'translateY(-10px)';
-        card.style.boxShadow = 'var(--glow)';
-    });
-    
-    card.addEventListener('mouseleave', () => {
-        card.style.transform = '';
-        card.style.boxShadow = '';
-    });
-});
-
-// Add loading animation
-window.addEventListener('load', () => {
-    const loader = document.createElement('div');
-    loader.className = 'loader';
-    loader.innerHTML = `
-        <div class="loader-content">
-            <div class="loader-spinner"></div>
-            <div class="loader-text">Loading<span class="loader-dots">...</span></div>
-        </div>
-    `;
-    document.body.appendChild(loader);
-    
-    // Add loader styles
-    const loaderStyle = document.createElement('style');
-    loaderStyle.textContent = `
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s, visibility 0.5s;
-        }
-        
-        .loader-content {
-            text-align: center;
-        }
-        
-        .loader-spinner {
-            width: 50px;
-            height: 50px;
-            border: 3px solid rgba(0, 255, 65, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--accent-primary);
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        .loader-text {
-            font-family: var(--font-code);
-            font-size: 1.2rem;
-            color: var(--accent-primary);
-        }
-        
-        .loader-dots {
-            animation: dots 1.5s infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60%, 100% { content: '...'; }
-        }
-        
-        .loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-    `;
-    document.head.appendChild(loaderStyle);
-    
-    // Hide loader after page is fully loaded
-    setTimeout(() => {
-        loader.classList.add('hidden');
-        setTimeout(() => {
-            loader.remove();
-        }, 500);
-    }, 1500);
-});
