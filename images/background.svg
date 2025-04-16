@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#1a1a2e" stroke-width="0.5"/>
+    </pattern>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="100%" height="100%" fill="#0f0f23"/>
+  <rect width="100%" height="100%" fill="url(#grid)"/>
+  
+  <!-- Code-like elements -->
+  <g fill="#00ff41" opacity="0.3" filter="url(#glow)">
+    <text x="100" y="150" font-family="monospace" font-size="14">function init() {</text>
+    <text x="120" y="180" font-family="monospace" font-size="14">const developer = new Developer();</text>
+    <text x="120" y="210" font-family="monospace" font-size="14">developer.createPortfolio();</text>
+    <text x="120" y="240" font-family="monospace" font-size="14">return developer.skills;</text>
+    <text x="100" y="270" font-family="monospace" font-size="14">}</text>
+    
+    <text x="1500" y="400" font-family="monospace" font-size="14">class Developer {</text>
+    <text x="1520" y="430" font-family="monospace" font-size="14">constructor() {</text>
+    <text x="1540" y="460" font-family="monospace" font-size="14">this.skills = [];</text>
+    <text x="1540" y="490" font-family="monospace" font-size="14">this.projects = [];</text>
+    <text x="1520" y="520" font-family="monospace" font-size="14">}</text>
+    <text x="1500" y="550" font-family="monospace" font-size="14">}</text>
+    
+    <text x="300" y="700" font-family="monospace" font-size="14">const portfolio = {</text>
+    <text x="320" y="730" font-family="monospace" font-size="14">theme: 'coding',</text>
+    <text x="320" y="760" font-family="monospace" font-size="14">animations: true,</text>
+    <text x="320" y="790" font-family="monospace" font-size="14">responsive: true</text>
+    <text x="300" y="820" font-family="monospace" font-size="14">};</text>
+    
+    <text x="1200" y="900" font-family="monospace" font-size="14">// TODO: Add more features</text>
+  </g>
+  
+  <!-- Binary streams -->
+  <g fill="#00ff41" opacity="0.1">
+    <text x="50" y="350" font-family="monospace" font-size="10">01001000 01100101 01101100 01101100 01101111</text>
+    <text x="1700" y="200" font-family="monospace" font-size="10">01010111 01101111 01110010 01101100 01100100</text>
+    <text x="800" y="950" font-family="monospace" font-size="10">01000011 01101111 01100100 01100101 01110010</text>
+  </g>
+  
+  <!-- Circuit-like paths -->
+  <path d="M 0,300 L 1920,300" stroke="#00ff41" stroke-width="0.5" opacity="0.2"/>
+  <path d="M 0,600 L 1920,600" stroke="#00ff41" stroke-width="0.5" opacity="0.2"/>
+  <path d="M 0,900 L 1920,900" stroke="#00ff41" stroke-width="0.5" opacity="0.2"/>
+  <path d="M 300,0 L 300,1080" stroke="#00ff41" stroke-width="0.5" opacity="0.2"/>
+  <path d="M 600,0 L 600,1080" stroke="#00ff41" stroke-width="0.5" opacity="0.2"/>
+  <path d="M 900,0 L 900,1080" stroke="#00ff41" stroke-width="0.5" opacity="0.2"/>
+  <path d="M 1200,0 L 1200,1080" stroke="#00ff41" stroke-width="0.5" opacity="0.2"/>
+  <path d="M 1500,0 L 1500,1080" stroke="#00ff41" stroke-width="0.5" opacity="0.2"/>
+  <path d="M 1800,0 L 1800,1080" stroke="#00ff41" stroke-width="0.5" opacity="0.2"/>
+</svg>
