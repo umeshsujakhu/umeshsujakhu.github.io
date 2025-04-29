@@ -3,49 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Umesh Sujakhu - Senior Software Engineer and Team Lead specializing in full-stack development">
+    <meta name="theme-color" content="#000000">
     <title>Umesh Sujakhu - Sr Software Engineer</title>
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="preload" href="css/experience.css" as="style">
+    <link rel="preload" href="images/background.svg" as="image">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/experience.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Defer non-critical CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    
+    <!-- Fallback for browsers that don't support preload -->
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    </noscript>
+    
+    <!-- AOS CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" media="print" onload="this.media='all'">
 </head>
 <body>
     <div class="background-container">
-        <object data="images/background.svg" type="image/svg+xml" class="background-svg"></object>
+        <img src="images/background.svg" alt="" class="background-svg" width="100%" height="100%" loading="eager">
     </div>
 
     <div class="cursor"></div>
-    <div class="terminal-container">
+    <div class="terminal-container" role="region" aria-label="Terminal Interface">
         <div class="terminal-header">
-            <div class="terminal-buttons">
-                <span class="terminal-button close"></span>
-                <span class="terminal-button minimize"></span>
-                <span class="terminal-button maximize"></span>
+            <div class="terminal-buttons" role="presentation">
+                <span class="terminal-button close" aria-label="Close terminal"></span>
+                <span class="terminal-button minimize" aria-label="Minimize terminal"></span>
+                <span class="terminal-button maximize" aria-label="Maximize terminal"></span>
             </div>
             <div class="terminal-title">umesh@portfolio:~</div>
         </div>
         <div class="terminal-body">
             <div class="terminal-content">
-                <div class="line">
+                <div class="line" data-aos="fade-up">
                     <span class="prompt">umesh@portfolio:~$</span>
                     <span class="command" id="typing-text">whoami</span>
                 </div>
-                <div class="line response" id="name-response">Umesh Sujakhu - Senior Software Engineer / Team Lead</div>
+                <div class="line response" id="name-response" data-aos="fade-up" data-aos-delay="100">Umesh Sujakhu - Senior Software Engineer / Team Lead</div>
                 
-                <div class="line">
+                <div class="line" data-aos="fade-up" data-aos-delay="200">
                     <span class="prompt">umesh@portfolio:~$</span>
                     <span class="command">cat about.txt</span>
                 </div>
-                <div class="line response" id="about-response">
+                <div class="line response" id="about-response" data-aos="fade-up" data-aos-delay="300">
                     <p>Hello, I'm a Senior Software Engineer with expertise in developing high-performance applications, leading optimization efforts, and enhancing system scalability.</p>
                     <p>I specialize in full-stack development with Node.js, Python, Vue, React, and Java, designing and implementing scalable RESTful APIs and microservices architectures.</p>
                 </div>
                 
-                <div class="line">
+                <div class="line" data-aos="fade-up" data-aos-delay="400">
                     <span class="prompt">umesh@portfolio:~$</span>
                     <span class="command">cat experience.log</span>
                 </div>
-                <div class="line response" id="experience-response">
+                <div class="line response" id="experience-response" data-aos="fade-up" data-aos-delay="500">
                     <p>Professional Experience:</p>
                     <ul>
                         <li>Senior Software Engineer / Team Lead at Coding Mountain (Apr 2023 - Present)</li>
@@ -56,25 +76,25 @@
                     <p>Type 'help' for more commands or click on Experience in the navigation.</p>
                 </div>
                 
-                <div class="line">
+                <div class="line" data-aos="fade-up" data-aos-delay="600">
                     <span class="prompt">umesh@portfolio:~$</span>
                     <span class="command">ls -la skills/</span>
                 </div>
-                <div class="line response" id="skills-response"></div>
+                <div class="line response" id="skills-response" data-aos="fade-up" data-aos-delay="700"></div>
                 
-                <div class="line">
+                <div class="line" data-aos="fade-up" data-aos-delay="800">
                     <span class="prompt">umesh@portfolio:~$</span>
                     <span class="command">cat projects.json</span>
                 </div>
-                <div class="line response" id="projects-response"></div>
+                <div class="line response" id="projects-response" data-aos="fade-up" data-aos-delay="900"></div>
                 
-                <div class="line">
+                <div class="line" data-aos="fade-up" data-aos-delay="1000">
                     <span class="prompt">umesh@portfolio:~$</span>
                     <span class="command">contact --info</span>
                 </div>
-                <div class="line response" id="contact-response"></div>
+                <div class="line response" id="contact-response" data-aos="fade-up" data-aos-delay="1100"></div>
                 
-                <div class="line">
+                <div class="line" data-aos="fade-up" data-aos-delay="1200">
                     <span class="prompt">umesh@portfolio:~$</span>
                     <span class="command" id="blinking-cursor">_</span>
                 </div>
@@ -659,5 +679,16 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 100
+            });
+        });
+    </script>
 </body>
 </html>
