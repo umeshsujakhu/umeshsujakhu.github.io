@@ -478,21 +478,43 @@ function animateProgressBars() {
   });
 }
 
+// Compute years since a start date (YYYY-MM). Returns 0 if start is in the future.
+function getYearsSince(startDateStr) {
+  const [year, month] = startDateStr.split("-").map(Number);
+  const start = new Date(year, month - 1, 1); // month is 0-indexed
+  const now = new Date();
+  const diffMs = now - start;
+  if (diffMs < 0) return 0;
+  const years = Math.floor(diffMs / (365.25 * 24 * 60 * 60 * 1000));
+  return years;
+}
+
 // Animate stat counters
 function animateStatCounters() {
   statValues.forEach((stat) => {
-    const target = parseInt(stat.getAttribute("data-count"));
+    let target;
+    const startDate = stat.getAttribute("data-start-date");
+    if (startDate) {
+      target = getYearsSince(startDate);
+    } else {
+      target = parseInt(stat.getAttribute("data-count"), 10) || 0;
+    }
     let count = 0;
     const duration = 2000; // 2 seconds
-    const interval = Math.floor(duration / target);
+    const step = target > 0 ? Math.max(1, Math.floor(duration / target)) : 1;
+
+    if (target === 0) {
+      stat.textContent = "0";
+      return;
+    }
 
     const counter = setInterval(() => {
-      count++;
+      count = Math.min(count + 1, target);
       stat.textContent = count;
       if (count >= target) {
         clearInterval(counter);
       }
-    }, interval);
+    }, step);
   });
 }
 
