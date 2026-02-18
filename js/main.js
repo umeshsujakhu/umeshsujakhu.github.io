@@ -491,6 +491,8 @@ function animateStatCounters() {
       target = parseInt(stat.getAttribute("data-count"), 10) || 0;
     }
 
+    console.log(target);
+
     const duration = 2000;
     if (target === 0) {
       stat.textContent = "0";
