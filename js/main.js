@@ -478,37 +478,20 @@ function animateProgressBars() {
   });
 }
 
-// Compute years since a start date (YYYY-MM). Returns 0 if start is in the future.
-function getYearsSince(startDateStr) {
-  const parts = startDateStr.split("-").map(Number);
-  if (parts.length < 2) return 0;
-  const [year, month] = parts;
-  const start = new Date(year, month - 1, 1); // month is 0-indexed
-  const now = new Date();
-  const diffMs = now - start;
-  if (diffMs < 0) return 0;
-  const years = Math.floor(diffMs / (365.25 * 24 * 60 * 60 * 1000));
-  return years;
-}
-
-const STAT_COUNTER_MAX = 50; // cap so animation always finishes in reasonable time
-
-// Animate stat counters (runs once per stat; prevents multiple intervals stacking)
+// Animate stat counters (data-count = number, or data-start-year = current year - start year)
 function animateStatCounters() {
-  statValues.forEach((stat) => {
-    if (stat.dataset.animated === "true") return;
-    stat.dataset.animated = "true";
+  const currentYear = new Date().getFullYear();
 
+  statValues.forEach((stat) => {
     let target;
-    const startDate = stat.getAttribute("data-start-date");
-    if (startDate) {
-      target = getYearsSince(startDate);
+    const startYear = stat.getAttribute("data-start-year");
+    if (startYear) {
+      target = Math.max(0, currentYear - parseInt(startYear, 10));
     } else {
       target = parseInt(stat.getAttribute("data-count"), 10) || 0;
     }
-    target = Math.min(Math.max(0, target), STAT_COUNTER_MAX);
 
-    const duration = 2000; // 2 seconds
+    const duration = 2000;
     if (target === 0) {
       stat.textContent = "0";
       return;
@@ -523,12 +506,6 @@ function animateStatCounters() {
         clearInterval(counter);
       }
     }, stepMs);
-
-    // Safety: always stop and set final value after duration
-    setTimeout(() => {
-      clearInterval(counter);
-      stat.textContent = target;
-    }, duration + 100);
   });
 }
 
