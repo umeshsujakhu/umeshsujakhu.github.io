@@ -478,36 +478,21 @@ function animateProgressBars() {
   });
 }
 
-// Animate stat counters (data-count = number, or data-start-year = current year - start year)
+// Animate stat counters
 function animateStatCounters() {
-  const currentYear = new Date().getFullYear();
-
   statValues.forEach((stat) => {
-    let target;
-    const startYear = stat.getAttribute("data-start-year");
-    if (startYear) {
-      target = Math.max(0, currentYear - parseInt(startYear, 10));
-    } else {
-      target = parseInt(stat.getAttribute("data-count"), 10) || 0;
-    }
-
-    console.log(target);
-
-    const duration = 2000;
-    if (target === 0) {
-      stat.textContent = "0";
-      return;
-    }
-
+    const target = parseInt(stat.getAttribute("data-count"));
     let count = 0;
-    const stepMs = Math.max(1, Math.floor(duration / target));
+    const duration = 2000; // 2 seconds
+    const interval = Math.floor(duration / target);
+
     const counter = setInterval(() => {
-      count += 1;
-      stat.textContent = Math.min(count, target);
+      count++;
+      stat.textContent = count;
       if (count >= target) {
         clearInterval(counter);
       }
-    }, stepMs);
+    }, interval);
   });
 }
 
